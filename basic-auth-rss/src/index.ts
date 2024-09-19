@@ -1,33 +1,43 @@
-/**
- * Welcome to Cloudflare Workers! This is your first worker.
- *
- * - Run `wrangler dev src/index.ts` in your terminal to start a development server
- * - Open a browser tab at http://localhost:8787/ to see your worker in action
- * - Run `wrangler deploy src/index.ts --name my-worker` to deploy your worker
- *
- * Learn more at https://developers.cloudflare.com/workers/
- */
+import { RSSItems } from './RSSItems';
+import { RSSItem } from './RSSItem';
 
-export interface Env {
-	// Example binding to KV. Learn more at https://developers.cloudflare.com/workers/runtime-apis/kv/
-	// MY_KV_NAMESPACE: KVNamespace;
-	//
-	// Example binding to Durable Object. Learn more at https://developers.cloudflare.com/workers/runtime-apis/durable-objects/
-	// MY_DURABLE_OBJECT: DurableObjectNamespace;
-	//
-	// Example binding to R2. Learn more at https://developers.cloudflare.com/workers/runtime-apis/r2/
-	// MY_BUCKET: R2Bucket;
-	//
-	// Example binding to a Service. Learn more at https://developers.cloudflare.com/workers/runtime-apis/service-bindings/
-	// MY_SERVICE: Fetcher;
-}
+const encodeCredentials = (username: string, password: string): string => {
+	const credentials = `${username}:${password}`;
+	return `Basic ${btoa(credentials)}`;
+};
+
+const checkBasicAuth = (request: Request): boolean => {
+	const authHeader = request.headers.get('Authorization');
+	if (!authHeader) {
+		return false;
+	}
+
+	const username = 'your-username';
+	const password = 'your-password';
+	const expectedAuthHeader = encodeCredentials(username, password);
+	return authHeader === expectedAuthHeader;
+};
 
 export default {
-	async fetch(
-		request: Request,
-		env: Env,
-		ctx: ExecutionContext
-	): Promise<Response> {
-		return new Response("Hello World!");
+	async fetch(request: Request): Promise<Response> {
+
+		if (!checkBasicAuth(request)) {
+			return new Response('Unauthorized', {
+				status: 401,
+				headers: {
+					'WWW-Authenticate': 'Basic realm="Protected Area"',
+				},
+			});
+		}
+
+		const rssItems = new RSSItems();
+		rssItems.add(new RSSItem('Item 1', 'Description of Item 1', new Date(), '1'));
+		rssItems.add(new RSSItem('Item 2', 'Description of Item 2', new Date(), '2'));
+
+		const rssFeed = rssItems.generateRSSFeed();
+
+		return new Response(rssFeed, {
+			headers: { 'Content-Type': 'application/rss+xml' },
+		});
 	},
 };
