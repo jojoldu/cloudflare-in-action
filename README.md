@@ -25,3 +25,21 @@ wrangler generate basic-auth-rss
 ✔ Would you like us to write your first test with Vitest? … yes
 ✨ Created basic-auth-rss/src/index.test.ts
 ```
+
+## 환경 변수 사용
+
+### Wrangler로 Secrets 설정
+
+먼저, Wrangler CLI를 사용하여 username과 password를 secrets으로 설정한다.
+
+1.1 Secrets 추가
+Wrangler를 통해 username과 password를 비밀로 저장하려면, 아래 명령어를 사용합니다.
+
+bash
+코드 복사
+wrangler secret put USERNAME
+이 명령어를 실행하면, 터미널에서 username 값을 입력하라는 메시지가 나타납니다. 이때, 원하는 username을 입력합니다.
+bash
+코드 복사
+wrangler secret put PASSWORD
+같은 방식으로 password 값을 입력합니다.

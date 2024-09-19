@@ -1,0 +1,6 @@
+### GET request to example server
+GET http://localhost:8787
+Authorization: Basic your-username your-password
+
+
+
