@@ -19,7 +19,7 @@ export class RSSItem {
         return this._description;
     }
 
-    get pubDate(): String {
+    get pubDate(): string {
         return this._pubDate.toUTCString();
     }
 

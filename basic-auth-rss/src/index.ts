@@ -1,40 +1,19 @@
-import { RSSItems } from './RSSItems';
-import { RSSItem } from './RSSItem';
+import {getRSSFeed} from './getRSSFeed';
 
-function encodeCredentials(username: string, password: string): string {
-	const credentials = `${username}:${password}`;
-	return `Basic ${btoa(credentials)}`;
-}
-
-function validateAuth(authHeader: string | null, username: string, password: string): void {
-	if (!authHeader) {
-		throw new Error("Authorization header is required");
-	}
-
-	const expectedAuthHeader = encodeCredentials(username, password);
-
-	if(authHeader !== expectedAuthHeader) {
-		throw new Error("Invalid credentials");
-	}
-}
-
-
-function getRSSFeed(): string {
-	const rssItems = new RSSItems();
-	rssItems.add(new RSSItem('Item 1', 'Description of Item 1', new Date(), '1'));
-	rssItems.add(new RSSItem('Item 2', 'Description of Item 2', new Date(), '2'));
-	return rssItems.generateRSSFeed();
+interface Env {
+	USERNAME: string
+	PASSWORD: string
 }
 
 export default {
-	async fetch(request: Request): Promise<Response> {
+	async fetch(request: Request, env: Env): Promise<Response> {
 		const authHeader = request.headers.get("Authorization");
-		const username = "your-username";
-		const password = "your-password";
+		const expectedAuthHeader = encodeCredentials(env.USERNAME, env.PASSWORD);
 
 		try {
-			validateAuth(authHeader, username, password);
+			validateAuth(authHeader, expectedAuthHeader);
 		} catch (e) {
+			console.log(e);
 			return new Response('Unauthorized', {
 				status: 401,
 				headers: {
@@ -48,3 +27,19 @@ export default {
 		});
 	},
 };
+
+function encodeCredentials(username: string, password: string): string {
+	console.log(`username: ${username}, password: ${password}`);
+	const credentials = `${username}:${password}`;
+	return `Basic ${btoa(credentials)}`;
+}
+
+function validateAuth(authHeader: string | null, expectedAuthHeader: string): void {
+	if (!authHeader) {
+		throw new Error("Authorization header is required");
+	}
+
+	if(authHeader !== expectedAuthHeader) {
+		throw new Error("Invalid credentials");
+	}
+}
