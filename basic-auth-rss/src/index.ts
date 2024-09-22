@@ -23,7 +23,7 @@ export default {
 		}
 
 		return new Response(getRSSFeed(), {
-			headers: { 'Content-Type': 'application/rss+xml' },
+			headers: { 'Content-Type': 'text/xml;charset=UTF-8' },
 		});
 	},
 };
