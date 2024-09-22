@@ -27,7 +27,6 @@ export class RSSItem {
         return this._guid;
     }
 
-// XML 형식으로 변환
     public toXML(): string {
         return `
       <item>
