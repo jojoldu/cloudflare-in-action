@@ -1,6 +1,12 @@
 # Cloudflare Workers 로 Basic Auth가 포함된 서버리스 RSS 배포하기
 
-## wrangler 설치
+## 0. 설치 환경
+
+- Node.js: 20.12.0
+- npm: 10.9.0
+- wrangler: 3.78.7
+
+## 1. wrangler 설치
 
 ```bash
 npm install -g wrangler
@@ -9,7 +15,7 @@ npm install -g wrangler
 ## wrangler로 프로젝트 생성
 
 ```bash
-wrangler generate basic-auth-rss
+wrangler init basic-auth-rss
 ```
 
 ```bash
@@ -30,16 +36,42 @@ wrangler generate basic-auth-rss
 
 ### Wrangler로 Secrets 설정
 
-먼저, Wrangler CLI를 사용하여 username과 password를 secrets으로 설정한다.
+먼저, Wrangler CLI를 사용하여 username과 password를 secrets으로 설정한다.  
+아래 명령어를 차례로 입력하면 된다.
 
-1.1 Secrets 추가
-Wrangler를 통해 username과 password를 비밀로 저장하려면, 아래 명령어를 사용합니다.
-
-bash
-코드 복사
+```bash
 wrangler secret put USERNAME
-이 명령어를 실행하면, 터미널에서 username 값을 입력하라는 메시지가 나타납니다. 이때, 원하는 username을 입력합니다.
-bash
-코드 복사
 wrangler secret put PASSWORD
-같은 방식으로 password 값을 입력합니다.
+```
+
+
+```bash
+wrangler secret put USERNAME
+
+ ⛅️ wrangler 3.78.4 (update available 3.78.7)
+-------------------------------------------------------
+
+▲ [WARNING] Processing wrangler.toml configuration:
+
+    - 😶 Ignored: "type":
+      Most common features now work out of the box with wrangler, including modules, jsx,
+  typescript, etc. If you need anything more, use a custom build.
+
+
+Attempting to login via OAuth...
+Opening a link in your default browser: https://dash.cloudflare.com/oauth2/auth?
+Successfully logged in.
+✔ Enter a secret value: … *******
+🌀 Creating the secret for the Worker "basic-auth-rss" 
+✨ Success! Uploaded secret USERNAME
+
+```
+
+
+## 7. 배포
+
+모든 작업이 완료되면 다음 명령어로 Cloudflare Workers에 배포한다.
+
+```bash
+wrangler deploy
+```
